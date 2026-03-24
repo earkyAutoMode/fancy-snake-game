@@ -13,23 +13,18 @@
             <h1>NEON SNAKE</h1>
             <div class="stats">
                 <div class="stat-box">SCORE: <span id="score">0</span></div>
+                <div id="multiplier-display" class="stat-box multiplier">x1.0</div>
                 <div class="stat-box">HIGH: <span id="high-score">0</span></div>
             </div>
         </div>
         
-        <canvas id="gameCanvas"></canvas>
-        
-        <div class="controls-hint">
-            <p>Use <b>ARROWS</b> or <b>WASD</b> to move</p>
-            <p id="start-msg">Press <b>SPACE</b> or <b>ANY KEY</b> to Start</p>
-        </div>
-
-        <div id="game-over" class="overlay hidden">
-            <h2>GAME OVER</h2>
-            <p>Final Score: <span id="final-score">0</span></p>
-            <button id="restart-btn">RESTART</button>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+            
+            <div id="start-screen" class="overlay">
+                <h2>READY?</h2>
+                <div class="speed-selector">
+                    <p>SELECT SPEED</p>
+                    <div class="speed-options">
+                        <button class="speed-btn active" data-speed="180" data-mult="1.0">EASY</button>
+                      
