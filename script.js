@@ -144,6 +144,58 @@ function draw() {
     snake.forEach((segment, index) => {
         const isHead = index === 0;
         ctx.fillStyle = isHead ? '#39ff14' : '#00d2ff';
+        ctx.shadowBlDy = 0;
+    }
+}
+
+function update() {
+    dx = nextDx;
+    dy = nextDy;
+
+    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+        endGame();
+        return;
+    }
+
+    if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        endGame();
+        return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+        // Scoring with multiplier
+        score += Math.round(10 * selectedMultiplier);
+        scoreElement.textContent = score;
+        createParticles(food.x * gridSize, food.y * gridSize, '#39ff14');
+        spawnFood();
+        // Dynamic speed up based on initial speed
+        currentSpeed = Math.max(40, selectedSpeed - Math.floor(score / (50 * selectedMultiplier)) * 5);
+    } else {
+        snake.pop();
+    }
+}
+
+function spawnFood() {
+    while (true) {
+        food = {
+            x: Math.floor(Math.random() * tileCount),
+            y: Math.floor(Math.random() * tileCount)
+        };
+        if (!snake.some(segment => segment.x === food.x && segment.y === food.y)) break;
+    }
+}
+
+function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 5, 0.4)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    snake.forEach((segment, index) => {
+        const isHead = index === 0;
+        ctx.fillStyle = isHead ? '#39ff14' : '#00d2ff';
         ctx.shadowBlur = isHead ? 15 : 5;
         ctx.shadowColor = ctx.fillStyle;
         
@@ -155,70 +207,7 @@ function draw() {
         );
     });
 
-    // Draw food
     ctx.fillStyle = '#ff2d75';
     ctx.shadowBlur = 20;
     ctx.shadowColor = '#ff2d75';
-    ctx.beginPath();
-    ctx.arc(
-        food.x * gridSize + gridSize / 2,
-        food.y * gridSize + gridSize / 2,
-        gridSize / 2 - 2,
-        0,
-        Math.PI * 2
-    );
-    ctx.fill();
-
-    // Draw particles
-    particles.forEach((p, i) => {
-        p.update();
-        p.draw();
-        if (p.opacity <= 0) particles.splice(i, 1);
-    });
-}
-
-function endGame() {
-    gameOver = true;
-    gameRunning = false;
-    finalScoreElement.textContent = score;
-    gameOverOverlay.classList.remove('hidden');
-    
-    if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('snakeHighScore', highScore);
-        highScoreElement.textContent = highScore;
-    }
-}
-
-function restart() {
-    score = 0;
-    scoreElement.textContent = '0';
-    snake = [{ x: 10, y: 10 }];
-    dx = 1; dy = 0;
-    nextDx = 1; nextDy = 0;
-    speed = 150;
-    gameOver = false;
-    gameRunning = true;
-    gameOverOverlay.classList.add('hidden');
-    spawnFood();
-}
-
-function gameLoop(currentTime) {
-    if (!gameRunning) return;
-    
-    requestAnimationFrame(gameLoop);
-    const secondsSinceLastRender = (currentTime - lastRenderTime);
-    if (secondsSinceLastRender < speed) return;
-    
-    lastRenderTime = currentTime;
-    update();
-    draw();
-}
-
-// Initial draw
-spawnFood();
-draw();
-
-// Event listeners
-window.addEventListener('keydown', handleInput);
-restartBtn.addEventListener('click', restart);
+    ctx.beg
